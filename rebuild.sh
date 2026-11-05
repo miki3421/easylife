@@ -1,4 +1,4 @@
-sudo dpkg --purge trustant-serverless
+sudo dpkg --purge truserverless
 sudo k3s-killall.sh
 sudo k3s-uninstall.sh
 sudo userdel trustant

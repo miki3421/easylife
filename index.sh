@@ -16,7 +16,7 @@ if [ "${#missing[@]}" -ne 0 ]; then
 fi
 
 BUCKET="trupub"
-PREFIX="trustant-serverless"
+PREFIX="truserverless"
 PUBLIC_URL="https://pub.trustant.ai/${PREFIX}"
 
 export AWS_ACCESS_KEY_ID="${TRUPUB_KEY}"
@@ -31,7 +31,7 @@ JSON="${WORKDIR}/index.json"
 
 # list-objects-v2 reports LastModified as ISO-8601 UTC, unlike `s3 ls` which
 # renders timestamps in the runner's local timezone. Output is tab-separated:
-# 2026-08-31T12:54:35.216000+00:00<TAB>3037597590<TAB>trustant-serverless/trustant-serverless_..._amd64.deb
+# 2026-08-31T12:54:35.216000+00:00<TAB>3037597590<TAB>truserverless/truserverless_..._amd64.deb
 aws --endpoint-url "${TRUPUB_ENDPOINT}" s3api list-objects-v2 \
     --bucket "${BUCKET}" \
     --prefix "${PREFIX}/" \
@@ -45,7 +45,7 @@ PREFIX="${PREFIX}" awk -F'\t' '{
     key = $3
     if (substr(key, 1, length(ENVIRON["PREFIX"]) + 1) != ENVIRON["PREFIX"] "/") next
     key = substr(key, length(ENVIRON["PREFIX"]) + 2)
-    if (key !~ /^trustant-serverless_[^\/]*\.deb$/) next
+    if (key !~ /^truserverless_[^\/]*\.deb$/) next
     split($1, t, "T")
     sub(/\..*$/, "", t[2])
     print t[1]" "t[2]" "$2" "key
@@ -69,9 +69,9 @@ function human(b,   u,i,v) {
 }
 {
     date = $1; time = $2; size = $3; name = $4
-    # trustant-serverless_<version>_<arch>.deb
+    # truserverless_<version>_<arch>.deb
     body = name
-    sub(/^trustant-serverless_/, "", body)
+    sub(/^truserverless_/, "", body)
     sub(/\.deb$/, "", body)
     p = index(body, "_")
     version = substr(body, 1, p - 1)
@@ -160,7 +160,7 @@ PUBLIC_URL="${PUBLIC_URL}" awk '
 {
     date = $1; time = $2; name = $4
     body = name
-    sub(/^trustant-serverless_/, "", body)
+    sub(/^truserverless_/, "", body)
     sub(/\.deb$/, "", body)
     p = index(body, "_")
     version = substr(body, 1, p - 1)

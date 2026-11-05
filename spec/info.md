@@ -1,6 +1,6 @@
 # Trustant Serverless Packages
 
-Builds the `trustant-serverless` Debian package: a self-contained, offline-installable
+Builds the `truserverless` Debian package: a self-contained, offline-installable
 bundle of [k3s](https://k3s.io) with Apache OpenServerless already deployed into
 it.
 
@@ -43,14 +43,14 @@ sudo -E ./package.sh
 
 This produces, in `../dist`:
 
-- `trustant-serverless_<version>_<arch>.deb`
+- `truserverless_<version>_<arch>.deb`
 - `version.txt` — the version string, so later steps need not re-derive it
 
 `package.sh --test` builds a much smaller package that bundles only the k3s
 control plane (`/var/lib/rancher/k3s/server`) and skips the data tree. It is for
 validating the install flow quickly, not for release.
 
-The first argument selects the flavour, `trustant-serverless` (the default),
+The first argument selects the flavour, `truserverless` (the default),
 `openserverless` or `trustant`. It sets the package name and the product name shown in the
 install messages. An optional second argument overrides the version:
 
@@ -72,9 +72,9 @@ to `../dist/version.txt` by `package.sh` and read back by `publish.sh`.
 TRUPUB_ENDPOINT=... TRUPUB_REGION=... TRUPUB_KEY=... TRUPUB_SECRET=... ./publish.sh
 ```
 
-`publish.sh` uploads `../dist/trustant-serverless_<version>_<arch>.deb` to the
-`trustant-serverless/` folder of the `trupub` bucket, publicly served from
-<https://pub.trustant.ai/trustant-serverless>, then adds a link to the notes of the
+`publish.sh` uploads `../dist/truserverless_<version>_<arch>.deb` to the
+`truserverless/` folder of the `trupub` bucket, publicly served from
+<https://pub.trustant.ai/truserverless>, then adds a link to the notes of the
 `v<version>` GitHub release, creating the release if it does not yet exist.
 
 The amd64 and arm64 jobs publish to the same release tag concurrently, so the
@@ -97,15 +97,15 @@ TRUPUB_ENDPOINT=... TRUPUB_REGION=... TRUPUB_KEY=... TRUPUB_SECRET=... ./index.s
 
 It lists the `.deb` files currently in the folder and writes two files next to them:
 
-- `https://pub.trustant.ai/trustant-serverless/index.html` — a human-readable page grouping packages by version, with each
+- `https://pub.trustant.ai/truserverless/index.html` — a human-readable page grouping packages by version, with each
   version's architectures and publication date, newest version first.
-- `https://pub.trustant.ai/trustant-serverless/index.json` — the same data for scripts, keyed by architecture:
+- `https://pub.trustant.ai/truserverless/index.json` — the same data for scripts, keyed by architecture:
 
 ```json
 {
   "amd64": {
-    "0.1.0+f1553b": "https://pub.trustant.ai/trustant-serverless/trustant-serverless_0.1.0+f1553b_amd64.deb",
-    "latest": "https://pub.trustant.ai/trustant-serverless/trustant-serverless_0.1.0+f1553b_amd64.deb"
+    "0.1.0+f1553b": "https://pub.trustant.ai/truserverless/truserverless_0.1.0+f1553b_amd64.deb",
+    "latest": "https://pub.trustant.ai/truserverless/truserverless_0.1.0+f1553b_amd64.deb"
   }
 }
 ```
@@ -115,7 +115,7 @@ an installer can fetch the current build without knowing a version number:
 
 ```bash
 arch="$(dpkg --print-architecture)"
-url="$(curl -sS https://pub.trustant.ai/trustant-serverless/index.json | jq -r ".\"$arch\".latest")"
+url="$(curl -sS https://pub.trustant.ai/truserverless/index.json | jq -r ".\"$arch\".latest")"
 ```
 
 The page is generated purely from what the bucket holds, so it is always
@@ -132,7 +132,7 @@ converge on a single `v<version>` release carrying both `.deb` files.
 ## Installing
 
 ```bash
-sudo apt install ./trustant-serverless_<version>_<arch>.deb
+sudo apt install ./truserverless_<version>_<arch>.deb
 ```
 
 If the `.deb` sits in your home directory, apt prints a notice that it cannot
@@ -177,5 +177,5 @@ ssh -L <port>:127.0.0.1:80 <your-server>
 ```
 
 Removal (`apt-get remove`) stops k3s and wipes `/var/lib/rancher/k3s` but leaves
-user data under `/home/trustant`; `apt-get purge trustant-serverless` removes that
+user data under `/home/trustant`; `apt-get purge truserverless` removes that
 too.

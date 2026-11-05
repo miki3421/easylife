@@ -16,7 +16,7 @@ if [ "${#missing[@]}" -ne 0 ]; then
 fi
 
 BUCKET="trupub"
-PREFIX="openserverless"
+PREFIX="trustant-serverless"
 PUBLIC_URL="https://pub.trustant.ai/${PREFIX}"
 
 export AWS_ACCESS_KEY_ID="${TRUPUB_KEY}"
@@ -31,7 +31,7 @@ JSON="${WORKDIR}/index.json"
 
 # list-objects-v2 reports LastModified as ISO-8601 UTC, unlike `s3 ls` which
 # renders timestamps in the runner's local timezone. Output is tab-separated:
-# 2026-08-31T12:54:35.216000+00:00<TAB>3037597590<TAB>openserverless/openserverless_..._amd64.deb
+# 2026-08-31T12:54:35.216000+00:00<TAB>3037597590<TAB>trustant-serverless/trustant-serverless_..._amd64.deb
 aws --endpoint-url "${TRUPUB_ENDPOINT}" s3api list-objects-v2 \
     --bucket "${BUCKET}" \
     --prefix "${PREFIX}/" \
@@ -45,7 +45,7 @@ PREFIX="${PREFIX}" awk -F'\t' '{
     key = $3
     if (substr(key, 1, length(ENVIRON["PREFIX"]) + 1) != ENVIRON["PREFIX"] "/") next
     key = substr(key, length(ENVIRON["PREFIX"]) + 2)
-    if (key !~ /^openserverless_[^\/]*\.deb$/) next
+    if (key !~ /^trustant-serverless_[^\/]*\.deb$/) next
     split($1, t, "T")
     sub(/\..*$/, "", t[2])
     print t[1]" "t[2]" "$2" "key
@@ -69,9 +69,9 @@ function human(b,   u,i,v) {
 }
 {
     date = $1; time = $2; size = $3; name = $4
-    # openserverless_<version>_<arch>.deb
+    # trustant-serverless_<version>_<arch>.deb
     body = name
-    sub(/^openserverless_/, "", body)
+    sub(/^trustant-serverless_/, "", body)
     sub(/\.deb$/, "", body)
     p = index(body, "_")
     version = substr(body, 1, p - 1)
@@ -99,7 +99,7 @@ END {
     print "<head>"
     print "<meta charset=\"utf-8\">"
     print "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-    print "<title>Apache OpenServerless \xe2\x80\x94 Downloads</title>"
+    print "<title>Trustant Serverless \xe2\x80\x94 Downloads</title>"
     print "<style>"
     print ":root { color-scheme: light dark; --fg: #1a1a1a; --muted: #666; --bg: #fff; --line: #e2e2e2; --accent: #0b5fff; }"
     print "@media (prefers-color-scheme: dark) { :root { --fg: #e8e8e8; --muted: #9a9a9a; --bg: #16181c; --line: #2e3238; --accent: #6ea8ff; } }"
@@ -125,7 +125,7 @@ END {
     print "</head>"
     print "<body>"
     print "<main>"
-    print "<h1>Apache OpenServerless</h1>"
+    print "<h1>Trustant Serverless</h1>"
     print "<p class=\"sub\">Debian packages, newest first. Install with <code>sudo apt install ./&lt;file&gt;.deb</code></p>"
 
     for (i = 1; i <= n; i++) {
@@ -160,7 +160,7 @@ PUBLIC_URL="${PUBLIC_URL}" awk '
 {
     date = $1; time = $2; name = $4
     body = name
-    sub(/^openserverless_/, "", body)
+    sub(/^trustant-serverless_/, "", body)
     sub(/\.deb$/, "", body)
     p = index(body, "_")
     version = substr(body, 1, p - 1)

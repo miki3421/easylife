@@ -65,7 +65,7 @@ jobs:
         working-directory: packages
 
       - name: package
-        run: sudo -E ./package.sh openserverless "${{github.ref_name}}"
+        run: sudo -E ./package.sh trustant-serverless "${{github.ref_name}}"
         working-directory: packages
 
       - name: publish

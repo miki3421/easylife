@@ -4,14 +4,14 @@ set -euo pipefail
 cd "$(dirname $0)"
 
 echo "=== PACKAGE ==="
-# Usage: ./package.sh [--test] [openserverless|trustant] [<version>]
+# Usage: ./package.sh [--test] [trustant-serverless|openserverless|trustant] [<version>]
 #
 # --test builds a reduced package that bundles ONLY /var/lib/rancher/k3s/server
 # (the control plane), skipping the rest of the k3s state tree (the data). Use it
 # to verify the install flow quickly without shipping the full data set.
 #
 # The first parameter selects the flavour: it sets the package name and the
-# product name shown to the user. Default is "openserverless".
+# product name shown to the user. Default is "trustant-serverless".
 # The optional <version> overrides the version derived from ops, e.g.
 # `./package.sh trustant 1.0.0` builds dist/trustant_1.0.0_<arch>.deb.
 TEST_BUILD=0
@@ -24,15 +24,16 @@ for arg in "$@"; do
     esac
 done
 if [ "${#POSITIONAL[@]}" -gt 2 ]; then
-    echo "Usage: $0 [--test] [openserverless|trustant] [<version>]" >&2
+    echo "Usage: $0 [--test] [trustant-serverless|openserverless|trustant] [<version>]" >&2
     exit 1
 fi
 
-PKGNAME="${POSITIONAL[0]:-openserverless}"
+PKGNAME="${POSITIONAL[0]:-trustant-serverless}"
 case "${PKGNAME}" in
+    trustant-serverless) PRODUCT="Trustant Serverless" ;;
     openserverless) PRODUCT="Apache OpenServerless" ;;
     trustant) PRODUCT="Trustant" ;;
-    *) echo "Invalid package name: ${PKGNAME} (expected openserverless or trustant)" >&2; exit 1 ;;
+    *) echo "Invalid package name: ${PKGNAME} (expected trustant-serverless, openserverless or trustant)" >&2; exit 1 ;;
 esac
 
 OPS_INFO="$(ops -info)"

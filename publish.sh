@@ -1,5 +1,5 @@
 #!/bin/bash
-# Publish the built .deb to the trupub S3 bucket (openserverless/ folder) and record it in the
+# Publish the built .deb to the trupub S3 bucket (trustant-serverless/ folder) and record it in the
 # GitHub release notes for this version.
 set -euo pipefail
 cd "$(dirname $0)"
@@ -18,7 +18,7 @@ if [ "${#missing[@]}" -ne 0 ]; then
 fi
 
 BUCKET="trupub"
-PREFIX="openserverless"
+PREFIX="trustant-serverless"
 PUBLIC_URL="https://pub.trustant.ai/${PREFIX}"
 DISTDIR="$(cd .. && pwd)/dist"
 
@@ -30,7 +30,7 @@ if [ ! -f "${VERSION_FILE}" ]; then
 fi
 VERSION="$(cat "${VERSION_FILE}")"
 ARCH="$(dpkg --print-architecture)"
-DEBNAME="openserverless_${VERSION}_${ARCH}.deb"
+DEBNAME="trustant-serverless_${VERSION}_${ARCH}.deb"
 DEB="${DISTDIR}/${DEBNAME}"
 
 if [ ! -f "${DEB}" ]; then
@@ -68,7 +68,7 @@ LINE="- [\`${DEBNAME}\`](${DEB_URL}) (${ARCH})"
 
 if ! gh release view "${TAG}" >/dev/null 2>&1; then
     gh release create "${TAG}" \
-        --title "openserverless ${VERSION}" \
+        --title "trustant-serverless ${VERSION}" \
         --notes "## Downloads"
 fi
 

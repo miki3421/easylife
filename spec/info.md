@@ -1,6 +1,6 @@
-# Apache OpenServerless Packages
+# Trustant Serverless Packages
 
-Builds the `openserverless` Debian package: a self-contained, offline-installable
+Builds the `trustant-serverless` Debian package: a self-contained, offline-installable
 bundle of [k3s](https://k3s.io) with Apache OpenServerless already deployed into
 it.
 
@@ -43,15 +43,15 @@ sudo -E ./package.sh
 
 This produces, in `../dist`:
 
-- `openserverless_<version>_<arch>.deb`
+- `trustant-serverless_<version>_<arch>.deb`
 - `version.txt` — the version string, so later steps need not re-derive it
 
 `package.sh --test` builds a much smaller package that bundles only the k3s
 control plane (`/var/lib/rancher/k3s/server`) and skips the data tree. It is for
 validating the install flow quickly, not for release.
 
-The first argument selects the flavour, `openserverless` (the default) or
-`trustant`. It sets the package name and the product name shown in the
+The first argument selects the flavour, `trustant-serverless` (the default),
+`openserverless` or `trustant`. It sets the package name and the product name shown in the
 install messages. An optional second argument overrides the version:
 
 ```bash
@@ -72,9 +72,9 @@ to `../dist/version.txt` by `package.sh` and read back by `publish.sh`.
 TRUPUB_ENDPOINT=... TRUPUB_REGION=... TRUPUB_KEY=... TRUPUB_SECRET=... ./publish.sh
 ```
 
-`publish.sh` uploads `../dist/openserverless_<version>_<arch>.deb` to the
-`openserverless/` folder of the `trupub` bucket, publicly served from
-<https://pub.trustant.ai/openserverless>, then adds a link to the notes of the
+`publish.sh` uploads `../dist/trustant-serverless_<version>_<arch>.deb` to the
+`trustant-serverless/` folder of the `trupub` bucket, publicly served from
+<https://pub.trustant.ai/trustant-serverless>, then adds a link to the notes of the
 `v<version>` GitHub release, creating the release if it does not yet exist.
 
 The amd64 and arm64 jobs publish to the same release tag concurrently, so the
@@ -97,15 +97,15 @@ TRUPUB_ENDPOINT=... TRUPUB_REGION=... TRUPUB_KEY=... TRUPUB_SECRET=... ./index.s
 
 It lists the `.deb` files currently in the folder and writes two files next to them:
 
-- `https://pub.trustant.ai/openserverless/index.html` — a human-readable page grouping packages by version, with each
+- `https://pub.trustant.ai/trustant-serverless/index.html` — a human-readable page grouping packages by version, with each
   version's architectures and publication date, newest version first.
-- `https://pub.trustant.ai/openserverless/index.json` — the same data for scripts, keyed by architecture:
+- `https://pub.trustant.ai/trustant-serverless/index.json` — the same data for scripts, keyed by architecture:
 
 ```json
 {
   "amd64": {
-    "0.1.0+f1553b": "https://pub.trustant.ai/openserverless/openserverless_0.1.0+f1553b_amd64.deb",
-    "latest": "https://pub.trustant.ai/openserverless/openserverless_0.1.0+f1553b_amd64.deb"
+    "0.1.0+f1553b": "https://pub.trustant.ai/trustant-serverless/trustant-serverless_0.1.0+f1553b_amd64.deb",
+    "latest": "https://pub.trustant.ai/trustant-serverless/trustant-serverless_0.1.0+f1553b_amd64.deb"
   }
 }
 ```
@@ -115,7 +115,7 @@ an installer can fetch the current build without knowing a version number:
 
 ```bash
 arch="$(dpkg --print-architecture)"
-url="$(curl -sS https://pub.trustant.ai/openserverless/index.json | jq -r ".\"$arch\".latest")"
+url="$(curl -sS https://pub.trustant.ai/trustant-serverless/index.json | jq -r ".\"$arch\".latest")"
 ```
 
 The page is generated purely from what the bucket holds, so it is always
@@ -132,7 +132,7 @@ converge on a single `v<version>` release carrying both `.deb` files.
 ## Installing
 
 ```bash
-sudo apt install ./openserverless_<version>_<arch>.deb
+sudo apt install ./trustant-serverless_<version>_<arch>.deb
 ```
 
 If the `.deb` sits in your home directory, apt prints a notice that it cannot
@@ -140,7 +140,7 @@ download unsandboxed as `_apt` — that is harmless (note the `N:` prefix): apt
 falls back to copying the file as root and the install proceeds. Move the file
 to `/tmp` to avoid it.
 
-The package refuses to install if OpenServerless is already installed, if another
+The package refuses to install if Trustant Serverless is already installed, if another
 k3s installation exists at `/var/lib/rancher/k3s`, or if any of ports 80, 443 or 6443 is in use — it
 bundles its own k3s and cannot coexist with another one. On success it creates
 the `trustant` user (uid/gid 769) and starts k3s. When the package bundles
@@ -177,5 +177,5 @@ ssh -L <port>:127.0.0.1:80 <your-server>
 ```
 
 Removal (`apt-get remove`) stops k3s and wipes `/var/lib/rancher/k3s` but leaves
-user data under `/home/trustant`; `apt-get purge openserverless` removes that
+user data under `/home/trustant`; `apt-get purge trustant-serverless` removes that
 too.
